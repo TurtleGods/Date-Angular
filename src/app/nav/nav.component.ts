@@ -15,7 +15,7 @@ import { TitleCasePipe } from '@angular/common';
 export class NavComponent {
   accountService = inject(AccountService);
   private router = inject(Router);
-  private taasttr = inject(ToastrService);
+  private toastr = inject(ToastrService);
   model: any = {};
 
   login() {
@@ -23,7 +23,7 @@ export class NavComponent {
       next: _ => {
         this.router.navigateByUrl('/members');
       },
-      error: (error) => this.taasttr,
+      error: (error) => this.toastr,
     });
   }
   logout() {
