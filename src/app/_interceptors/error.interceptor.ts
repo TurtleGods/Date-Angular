@@ -5,7 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { catchError, throwError } from 'rxjs';
 
 export const errorInterceptor: HttpInterceptorFn = (req,next) => {
-  const rounter = inject(Router);
+  const router = inject(Router);
   const toastr = inject(ToastrService);
 
   return next(req).pipe(
@@ -29,11 +29,11 @@ export const errorInterceptor: HttpInterceptorFn = (req,next) => {
             toastr.error('Unauthorised', error.status);
             break;
           case 404:
-            rounter.navigateByUrl('/not-found');
+            router.navigateByUrl('/not-found');
             break;
           case 500:
             const navigationExtras :NavigationExtras = {state: {error: error.error}};
-            rounter.navigateByUrl('/server-error', navigationExtras);
+            router.navigateByUrl('/server-error', navigationExtras);
             break;
           default:
             toastr.error('Something unexpected went wrong', error.status);
