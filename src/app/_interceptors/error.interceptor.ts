@@ -4,12 +4,12 @@ import { NavigationExtras, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { catchError, throwError } from 'rxjs';
 
-export const errorInterceptor: HttpInterceptorFn = (req, next) => {
-  const router = inject(Router);
+export const errorInterceptor: HttpInterceptorFn = (req,next) => {
+  const rounter = inject(Router);
   const toastr = inject(ToastrService);
-  
+
   return next(req).pipe(
-    catchError(error => {
+    catchError((error) => {
       if (error) {
         switch (error.status) {
           case 400:
@@ -20,38 +20,26 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
                   modalStatusErrors.push(error.error.errors[key]);
                 }
               }
-              throw modalStatusErrors.flat();
-            }else{
-              toastr.error(error.error, error.status.toString());
+              return throwError(() => modalStatusErrors.flat());
+            } else {
+              toastr.error(error.error, error.status);
             }
             break;
-            
           case 401:
-            toastr.error('Unauthorised', error.status.toString());
+            toastr.error('Unauthorised', error.status);
             break;
-            
-          case 403:
-            toastr.error('Forbidden', error.status.toString());
-            break;
-            
           case 404:
-            router.navigateByUrl('/not-found');
+            rounter.navigateByUrl('/not-found');
             break;
-            
           case 500:
-            const navigationExtras: NavigationExtras = {
-              state: { error: error.error }
-            };
-            router.navigateByUrl('/server-error', navigationExtras);
+            const navigationExtras :NavigationExtras = {state: {error: error.error}};
+            rounter.navigateByUrl('/server-error', navigationExtras);
             break;
-            
           default:
-            toastr.error('Something unexpected went wrong');
+            toastr.error('Something unexpected went wrong', error.status);
             break;
         }
       }
-      
-      // Re-throw the error for components to handle if needed
       return throwError(() => error);
     })
   );
